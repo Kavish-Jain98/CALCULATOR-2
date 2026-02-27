@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Calculator</title>
+    <style>
+      body{font-family:Segoe UI,Roboto,Arial;margin:24px}
+      .options{display:flex;gap:12px;margin-bottom:18px}
+      .option-label{cursor:pointer;padding:8px 12px;border:1px solid #ccc;border-radius:6px}
+      .option-input{display:none}
+      .option-label.selected{background:#0078d4;color:#fff;border-color:#0078d4}
+      .content{padding:16px;border:1px solid #eee;border-radius:6px;background:#fafafa}
+    </style>
+  </head>
+  <body>
+    <h1>Pick one option</h1>
+
+    <div class="options" role="radiogroup" aria-label="Four choices">
+      <label class="option-label" for="opt1">
+        <input class="option-input" type="radio" name="choice" id="opt1" value="one" checked>
+        Addition
+      </label>
+      <label class="option-label" for="opt2">
+        <input class="option-input" type="radio" name="choice" id="opt2" value="two">
+        Subtraction
+      </label>
+      <label class="option-label" for="opt3">
+        <input class="option-input" type="radio" name="choice" id="opt3" value="three">
+        Multiplication
+      </label>
+      <label class="option-label" for="opt4">
+        <input class="option-input" type="radio" name="choice" id="opt4" value="four">
+        Division
+      </label>
+    </div>
+
+    <div id="display" class="content" aria-live="polite"></div>
+
+    <script>
+      const display = document.getElementById('display');
+      const labels = document.querySelectorAll('.option-label');
+
+      function handleAdd(){
+        const a = parseFloat(document.getElementById('numA_add').value) || 0;
+        const b = parseFloat(document.getElementById('numB_add').value) || 0;
+        const sum = a + b;
+        document.getElementById('addResult').textContent = 'Result: ' + sum;
+      }
+
+      function handleSub(){
+        const a = parseFloat(document.getElementById('numA_sub').value) || 0;
+        const b = parseFloat(document.getElementById('numB_sub').value) || 0;
+        document.getElementById('subResult').textContent = 'Result: ' + (a - b);
+      }
+
+      function handleMul(){
+        const a = parseFloat(document.getElementById('numA_mul').value) || 0;
+        const b = parseFloat(document.getElementById('numB_mul').value) || 0;
+        document.getElementById('mulResult').textContent = 'Result: ' + (a * b);
+      }
+
+      function handleDiv(){
+        const a = parseFloat(document.getElementById('numA_div').value) || 0;
+        const b = parseFloat(document.getElementById('numB_div').value) || 0;
+        if(b === 0){
+          document.getElementById('divResult').textContent = 'Error: Cannot divide by zero';
+          return;
+        }
+        document.getElementById('divResult').textContent = 'Result: ' + (a / b);
+      }
+
+      const contentMap = {
+        one: `
+          <h2>Addition</h2>
+          <div>
+            <label>Number A: <input id="numA_add" type="number" step="any" /></label>
+          </div>
+          <div>
+            <label>Number B: <input id="numB_add" type="number" step="any" /></label>
+          </div>
+          <div style="margin-top:8px">
+            <button id="addBtn">Add</button>
+          </div>
+          <div id="addResult" style="margin-top:8px;font-weight:600"></div>
+        `,
+        two: `
+          <h2>Subtraction</h2>
+          <div>
+            <label>Number A: <input id="numA_sub" type="number" step="any" /></label>
+          </div>
+          <div>
+            <label>Number B: <input id="numB_sub" type="number" step="any" /></label>
+          </div>
+          <div style="margin-top:8px">
+            <button id="subBtn">Subtract</button>
+          </div>
+          <div id="subResult" style="margin-top:8px;font-weight:600"></div>
+        `,
+        three: `
+          <h2>Multiplication</h2>
+          <div>
+            <label>Number A: <input id="numA_mul" type="number" step="any" /></label>
+          </div>
+          <div>
+            <label>Number B: <input id="numB_mul" type="number" step="any" /></label>
+          </div>
+          <div style="margin-top:8px">
+            <button id="mulBtn">Multiply</button>
+          </div>
+          <div id="mulResult" style="margin-top:8px;font-weight:600"></div>
+        `,
+        four: `
+          <h2>Division</h2>
+          <div>
+            <label>Number A: <input id="numA_div" type="number" step="any" /></label>
+          </div>
+          <div>
+            <label>Number B: <input id="numB_div" type="number" step="any" /></label>
+          </div>
+          <div style="margin-top:8px">
+            <button id="divBtn">Divide</button>
+          </div>
+          <div id="divResult" style="margin-top:8px;font-weight:600"></div>
+        `
+      };
+
+      function updateSelection(value){
+        display.innerHTML = contentMap[value] || '<p>No content available.</p>';
+        labels.forEach(lbl => {
+          const inp = lbl.querySelector('.option-input');
+          lbl.classList.toggle('selected', inp.checked);
+        });
+
+        if(value === 'one'){
+          const btn = document.getElementById('addBtn');
+          if(btn) btn.addEventListener('click', handleAdd);
+        } else if(value === 'two'){
+          const btn = document.getElementById('subBtn');
+          if(btn) btn.addEventListener('click', handleSub);
+        } else if(value === 'three'){
+          const btn = document.getElementById('mulBtn');
+          if(btn) btn.addEventListener('click', handleMul);
+        } else if(value === 'four'){
+          const btn = document.getElementById('divBtn');
+          if(btn) btn.addEventListener('click', handleDiv);
+        }
+      }
+
+      const checked = document.querySelector('.option-input:checked');
+      updateSelection(checked ? checked.value : 'one');
+
+      document.querySelectorAll('.option-input').forEach(inp => {
+        inp.addEventListener('change', e => updateSelection(e.target.value));
+      });
+    </script>
+  </body>
+</html>
